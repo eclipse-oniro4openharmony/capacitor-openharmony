@@ -1,14 +1,48 @@
 #!/bin/bash
 
 BUNDLE_ID="org.oniroproject.ionicohos"
+GREP_FILTER=""
 
-cd native-template
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+    --grep)
+      GREP_FILTER="$2"
+      shift 2
+      ;;
+    *)
+      echo "Unknown argument: $1"
+      shift
+      ;;
+  esac
+done
 
-hvigorw assembleHap --mode module -p product=default -p module=entry -p buildMode=debug --stacktrace --no-parallel --no-daemon
+cd native-template || exit 1
 
+# Build
+hvigorw assembleHap --mode module -p product=default -p module=entry -p buildMode=debug --stacktrace --no-parallel --no-daemon || { echo "Build failed"; exit 1; }
+
+# Install and Clear Logs
 hdc install entry/build/default/outputs/default/entry-default-signed.hap
 hdc shell hilog -r
 hdc shell aa start -a EntryAbility -b "$BUNDLE_ID"
-pid=$(timeout 0.5 hdc track-jpid | awk -v id="$BUNDLE_ID" '$2==id {print $1}')
-echo "app running PID: $pid"
-hdc shell hilog -P "$pid"
+
+# Give the app a moment to spin up
+sleep 1 
+
+# Extract PID
+pid=$(hdc shell ps -ef | grep "$BUNDLE_ID" | grep -v grep | awk '{print $2}')
+
+if [ -z "$pid" ]; then
+    echo "Error: Could not find PID for $BUNDLE_ID. Did the app crash?"
+    exit 1
+fi
+
+echo "App running PID: $pid"
+
+# Execute Log Stream
+if [ -n "$GREP_FILTER" ]; then
+    # Note: Using -D to filter by domain or -T for tags is also helpful in hilog
+    hdc shell hilog -P "$pid" | grep -E "$GREP_FILTER"
+else
+    hdc shell hilog -P "$pid"
+fi

@@ -108,13 +108,16 @@ Tasks:
    - generate `PluginRegistry.ets`
    - update `oh-package.json5` as needed
 3. Implement `open`:
-   - open DevEco project on supported host OS
+   - open DevEco project on supported host OS (Windows, MacOS)
    - return actionable error on unsupported environments
+4. Implement `run`:
+   - build and run on supported host OS (Linux, see `run-ohos-app.sh`)
 
 Exit Criteria:
 1. `npx cap add openharmony` creates a buildable native project.
 2. `npx cap sync openharmony` updates assets and plugin registry deterministically.
 3. `npx cap open openharmony` launches project or returns clear fallback instructions.
+4. `npx cap run openharmony` builds and runs on supported host OS or returns clear fallback instructions.
 
 ### Phase 4: Plugin Runtime MVP
 Goal: prove plugin contract end-to-end with maintainable architecture.

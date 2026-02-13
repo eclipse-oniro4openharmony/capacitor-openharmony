@@ -1,6 +1,8 @@
 import { AbilityConstant, ConfigurationConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
+import { bridgeInstance } from '../capacitor/CapacitorBridge';
+import { AppState, AppUrl } from '../capacitor/BridgeInterfaces';
 
 const DOMAIN = 0x0000;
 
@@ -39,10 +41,26 @@ export default class EntryAbility extends UIAbility {
   onForeground(): void {
     // Ability has brought to foreground
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onForeground');
+    if (bridgeInstance) {
+        let appState: AppState = { isActive: true };
+        bridgeInstance.notifyListeners('App', 'appStateChange', appState);
+    }
   }
 
   onBackground(): void {
     // Ability has back to background
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onBackground');
+    if (bridgeInstance) {
+        let appState: AppState = { isActive: false };
+        bridgeInstance.notifyListeners('App', 'appStateChange', appState);
+    }
+  }
+
+  onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+    hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onNewWant');
+    if (bridgeInstance) {
+        let appUrl: AppUrl = { url: want.uri || '' };
+        bridgeInstance.notifyListeners('App', 'appUrlOpen', appUrl);
+    }
   }
 }
