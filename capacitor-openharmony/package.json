@@ -1,0 +1,24 @@
+{
+  "name": "@capacitor-community/openharmony",
+  "version": "0.0.1",
+  "description": "OpenHarmony platform adapter for Capacitor",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "capacitor",
+    "openharmony",
+    "ionic"
+  ],
+  "author": "Ionic Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "@capacitor/core": "^6.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
