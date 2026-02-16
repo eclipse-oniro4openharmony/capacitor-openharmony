@@ -197,7 +197,7 @@ Exit Criteria:
 ## 8. Milestone Roadmap
 1. M1 (Weeks 1-2): Phase 1 complete.
 2. M2 (Weeks 3-5): Phase 2 complete with manual prototype.
-3. M3 (Weeks 6-8): Phase 3 complete with deterministic CLI sync.
+3. M3 (Weeks 6-8): Phase 3 complete with CLI adapter (`add`, `sync`, `run`).
 4. M4 (Weeks 9-10): Phase 4 complete with registry-based Device plugin.
 5. M5 (Weeks 11-12): Phases 5-6 complete with baseline CI.
 
