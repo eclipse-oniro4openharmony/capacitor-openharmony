@@ -21,7 +21,7 @@ export async function sync(config: any) {
     await copy(src, dest);
     console.log('Web assets synced.');
 
-    await generatePluginRegistry(projectRoot);
+    // await generatePluginRegistry(projectRoot);
   } catch (e) {
     console.error('Sync failed:', e);
   }

@@ -120,7 +120,7 @@ Exit Criteria:
 Goal: prove plugin contract end-to-end with maintainable architecture.
 
 Tasks:
-1. Introduce base plugin class and registry (`PluginRegistry.ets`) in POC, not hardcoded bridge routing.
+1. Introduce base plugin class and registry (`PluginRegistry.ets`) in POC. Use manual registration for now (disable auto-generation).
 2. Implement `Device.getInfo` using OpenHarmony APIs.
 3. Add typed plugin call envelope and standardized success/error response serializer.
 
