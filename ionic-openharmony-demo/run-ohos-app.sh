@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BUNDLE_ID="org.oniroproject.ionicohos"
+BUNDLE_ID="com.example.helloworld"
 GREP_FILTER=""
 
 while [[ "$#" -gt 0 ]]; do
@@ -16,7 +16,16 @@ while [[ "$#" -gt 0 ]]; do
   esac
 done
 
-cd native-template || exit 1
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+if [ ! -d "$SCRIPT_DIR/openharmony" ]; then
+    echo "Error: openharmony directory not found at $SCRIPT_DIR/openharmony."
+    exit 1
+fi
+
+cd "$SCRIPT_DIR/openharmony" || exit 1
+
+
 
 # Build
 hvigorw assembleHap --mode module -p product=default -p module=entry -p buildMode=debug --stacktrace --no-parallel --no-daemon || { echo "Build failed"; exit 1; }
