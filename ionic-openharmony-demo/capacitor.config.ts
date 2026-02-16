@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'org.oniroproject.ionicohos',
-  appName: 'ionic-openharmony-demo',
+  appId: 'com.example.helloworld',
+  appName: 'HelloWorld',
   webDir: 'dist'
 };
 

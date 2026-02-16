@@ -110,14 +110,11 @@ Tasks:
 3. Implement `open`:
    - open DevEco project on supported host OS (Windows, MacOS)
    - return actionable error on unsupported environments
-4. Implement `run`:
-   - build and run on supported host OS (Linux, see `run-ohos-app.sh`)
 
 Exit Criteria:
 1. `npx cap add openharmony` creates a buildable native project.
 2. `npx cap sync openharmony` updates assets and plugin registry deterministically.
 3. `npx cap open openharmony` launches project or returns clear fallback instructions.
-4. `npx cap run openharmony` builds and runs on supported host OS or returns clear fallback instructions.
 
 ### Phase 4: Plugin Runtime MVP
 Goal: prove plugin contract end-to-end with maintainable architecture.
@@ -197,7 +194,7 @@ Exit Criteria:
 ## 8. Milestone Roadmap
 1. M1 (Weeks 1-2): Phase 1 complete.
 2. M2 (Weeks 3-5): Phase 2 complete with manual prototype.
-3. M3 (Weeks 6-8): Phase 3 complete with CLI adapter (`add`, `sync`, `run`).
+3. M3 (Weeks 6-8): Phase 3 complete with CLI adapter (`add`, `sync`).
 4. M4 (Weeks 9-10): Phase 4 complete with registry-based Device plugin.
 5. M5 (Weeks 11-12): Phases 5-6 complete with baseline CI.
 
