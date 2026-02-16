@@ -42,12 +42,12 @@ async function updateAppJson5(projectRoot, appId, appName) {
         // Also need to update string resource for app_name
         const stringResPath = (0, path_1.join)(projectRoot, 'openharmony', 'AppScope', 'resources', 'base', 'element', 'string.json');
         const strings = await fs.readJson(stringResPath);
-        const appNameEntry = strings.element.find((e) => e.name === 'app_name');
+        const appNameEntry = strings.string.find((e) => e.name === 'app_name');
         if (appNameEntry) {
             appNameEntry.value = appName;
         }
         else {
-            strings.element.push({ name: 'app_name', value: appName });
+            strings.string.push({ name: 'app_name', value: appName });
         }
         await fs.writeJson(stringResPath, strings, { spaces: 2 });
         await fs.writeFile(appJsonPath, content);

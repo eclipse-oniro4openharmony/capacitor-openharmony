@@ -4,7 +4,7 @@ import { updateAppJson5 } from './common';
 import { CapacitorConfig } from '@capacitor/cli';
 
 export async function addOpenHarmony(config: CapacitorConfig) {
-    const projectRoot = process.cwd();
+    const projectRoot = process.env.CAPACITOR_ROOT_DIR || process.cwd();
     const platformDir = join(projectRoot, 'openharmony');
 
     if (existsSync(platformDir)) {

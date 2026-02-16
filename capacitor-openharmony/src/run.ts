@@ -3,7 +3,7 @@ import { join } from 'path';
 import { existsSync } from 'fs';
 
 export async function run(target: string = 'default') {
-    const projectRoot = process.cwd();
+    const projectRoot = process.env.CAPACITOR_ROOT_DIR || process.cwd();
     const ohosRoot = join(projectRoot, 'openharmony');
 
     if (!existsSync(ohosRoot)) {

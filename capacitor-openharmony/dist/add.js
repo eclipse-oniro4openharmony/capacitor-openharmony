@@ -5,7 +5,7 @@ const fs_extra_1 = require("fs-extra");
 const path_1 = require("path");
 const common_1 = require("./common");
 async function addOpenHarmony(config) {
-    const projectRoot = process.cwd();
+    const projectRoot = process.env.CAPACITOR_ROOT_DIR || process.cwd();
     const platformDir = (0, path_1.join)(projectRoot, 'openharmony');
     if ((0, fs_extra_1.existsSync)(platformDir)) {
         console.log('OpenHarmony platform already exists.');

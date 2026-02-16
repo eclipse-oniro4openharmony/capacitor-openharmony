@@ -6,7 +6,12 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "capacitor:add": "node -e \"require('./dist/index').add(JSON.parse(process.env.CAPACITOR_CONFIG))\"",
+    "capacitor:copy": "node -e \"require('./dist/index').copy(JSON.parse(process.env.CAPACITOR_CONFIG))\"",
+    "capacitor:update": "node -e \"require('./dist/index').update(JSON.parse(process.env.CAPACITOR_CONFIG))\"",
+    "capacitor:open": "node -e \"require('./dist/index').open(JSON.parse(process.env.CAPACITOR_CONFIG))\"",
+    "capacitor:run": "node -e \"require('./dist/index').run(JSON.parse(process.env.CAPACITOR_CONFIG))\""
   },
   "keywords": [
     "capacitor",
@@ -35,14 +40,6 @@
     "assets/"
   ],
   "capacitor": {
-    "ios": {
-      "src": "ios"
-    },
-    "android": {
-        "src": "android"
-    },
-     "openharmony": {
-      "src": "openharmony"
-    }
+    "platform": "openharmony"
   }
 }

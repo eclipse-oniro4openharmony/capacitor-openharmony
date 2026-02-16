@@ -5,7 +5,7 @@ const child_process_1 = require("child_process");
 const path_1 = require("path");
 const fs_1 = require("fs");
 async function run(target = 'default') {
-    const projectRoot = process.cwd();
+    const projectRoot = process.env.CAPACITOR_ROOT_DIR || process.cwd();
     const ohosRoot = (0, path_1.join)(projectRoot, 'openharmony');
     if (!(0, fs_1.existsSync)(ohosRoot)) {
         console.error('OpenHarmony platform not found. Run "npx cap add openharmony" first.');
