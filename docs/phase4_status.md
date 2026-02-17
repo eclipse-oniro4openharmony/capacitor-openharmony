@@ -13,26 +13,37 @@ This phase focused on implementing the Plugin Runtime MVP, enabling the executio
 3.  **Device Plugin**: Implemented `DevicePlugin` (extending `CapacitorPlugin`) with:
     -   `getInfo()`: Returns device model, OS version, manufacturer, etc., using OpenHarmony's `deviceInfo` API.
     -   `getId()`: Returns a placeholder UUID (to be implemented fully later).
-4.  **Frontend Integration**: Updated `App.tsx` to call `Device.getInfo()` and display the results.
-5.  **Native Template**: Synced all native changes to `capacitor-openharmony/assets/native-template`.
+6.  **App Plugin**: Implemented `App` plugin with:
+    -   `exitApp()`: Terminates the application.
+    -   Listener support: Added stubs for `addListener`, `removeListener`, and `removeAllListeners` to support event handling (e.g., `appStateChange`, `appUrlOpen`) via the bridge.
+7.  **Network Plugin**: Implemented `Network` plugin with:
+    -   `getStatus()`: Returns network connection status (WiFi, Cellular, None) using `@ohos.net.connection`.
+    -   `networkStatusChange`: Monitors network changes and emits events to the web layer.
+8.  **CLI Automation**: Enhanced `sync.ts` to:
+    -   Automatically discover installed Capacitor plugins with OpenHarmony support.
+    -   Generate `PluginRegistry.ets` dynamically, registering discovered plugins (including `App` and `Network`).
+    -   Update `oh-package.json5` to include plugin dependencies.
+    -   Fix `oh-package.json5` configuration injection (comma handling, location).
 
 ## Technical Details
 -   **Bridge Communication**:
     -   The bridge uses `window.androidBridge` (injected via `javaScriptProxy`).
     -   **CRITICAL**: A custom JS adapter is injected in `CapacitorBridge.ets` (`injectCapacitorGlobal`) to define `window.Capacitor.nativePromise`, `PluginHeaders`, and callbacks. This is required because `@capacitor/core` 6+ does not include the bridge logic in the JS bundle; it expects the native platform to provide it.
 -   **Plugin Registry**:
-    -   Disabled automatic generation of `PluginRegistry.ets` in the CLI (`sync.ts`) to allow manual registration for the MVP.
-    -   `Device` plugin is manually registered in `PluginRegistry.ets`.
+    -   **Automated Generation**: The `sync` command now generates `PluginRegistry.ets` based on `package.json` dependencies.
+    -   Core plugins (`Device`, `App`, `Network`) are currently included by default in the generation logic as they reside in the template for this phase.
 -   **ArkTS Compatibility**: 
     -   Refactored `CapacitorBridge` to avoid `Function.call` and `Function.apply`.
-    -   Used explicit classes (e.g., `EmptyProxy`) instead of object literals.
+    -   Used explicit classes (e.g., `EmptyProxy`, `NetworkStatus`) instead of object literals to satisfy ArkTS strict mode.
 
 ## Verification
 -   The demo app (`ionic-openharmony-demo`) builds and runs on OpenHarmony.
 -   The app serves local assets (`index.html`, `js`, `css`) via `http://localhost`.
--   `Device.getInfo()` is called, and the native bridge intercepts and routes the call.
+-   `Device.getInfo()`, `App.exitApp()`, and `Network.getStatus()` are called successfully.
+-   Plugin events (`networkStatusChange`) are propagated from native to web.
 
-## Next Steps (Phase 5)
--   Implement more complex plugins (e.g., `App`, `Network`).
--   Improve the CLI tool to handle plugin installation automatically.
+## Next Steps 
 -   Create a proper JS adapter for OpenHarmony to avoid the `androidBridge` shim.
+-   Extract core plugins (`App`, `Device`, `Network`) into separate packages/modules.
+-   Implement `FileSystem` plugin.
+-   Prepare for initial release/packaging.
