@@ -6,7 +6,13 @@ import { PluginCall } from "./PluginCall";
 import { CapacitorPlugin } from "./CapacitorPlugin";
 import { PluginRegistry } from "./PluginRegistry";
 import { hilog } from "@kit.PerformanceAnalysisKit";
-import { BridgeMessage, PluginResult, ResponseHeader, HarmonyProxy } from "./BridgeInterfaces";
+import {
+  BridgeMessage,
+  PluginResult,
+  ResponseHeader,
+  HarmonyProxy,
+  PluginHeader,
+} from "./BridgeInterfaces";
 
 const TAG = "CapacitorBridge";
 const DOMAIN = 0x0000;
@@ -241,17 +247,8 @@ export class CapacitorBridge {
         window.Capacitor = window.Capacitor || {};
         window.Capacitor.Plugins = window.Capacitor.Plugins || {};
         
-        // 1. Define Plugin Headers (Manual for MVP, should be dynamic)
-        window.Capacitor.PluginHeaders = [
-          {
-            name: 'Device',
-            methods: [
-              { name: 'getInfo', rtype: 'promise' },
-              { name: 'getId', rtype: 'promise' }
-            ]
-          }
-          // Add other plugins here
-        ];
+        // 1. Define Plugin Headers
+        window.Capacitor.PluginHeaders = ${JSON.stringify(this.registry.getPluginHeaders())};
 
         // 2. Define Callback Management
         window.Capacitor.callbacks = window.Capacitor.callbacks || {};

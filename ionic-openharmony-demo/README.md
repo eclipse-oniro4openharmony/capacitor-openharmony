@@ -34,5 +34,5 @@ Follow these steps to build and run the project:
 6.  **Run the application:**
     Use the provided helper script to build the HAP and install it on a connected device:
     ```bash
-    ./run-ohos-app.sh
+    ./run-ohos-app.sh --grep string_to_filter_logs
     ```

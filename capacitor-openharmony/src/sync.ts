@@ -87,6 +87,7 @@ async function generatePluginRegistry(projectRoot: string) {
 
   const content = `import { CapacitorPlugin } from './CapacitorPlugin';
 import { CapacitorBridge } from './CapacitorBridge';
+import { PluginHeader, PluginMethod } from './BridgeInterfaces';
 import { common } from '@kit.AbilityKit';
 import { DevicePlugin } from './plugins/Device';
 import { AppPlugin } from './plugins/App';
@@ -113,6 +114,19 @@ export class PluginRegistry {
 
   getPlugin(pluginId: string): CapacitorPlugin | undefined {
     return this.plugins.get(pluginId);
+  }
+
+  getPluginHeaders(): PluginHeader[] {
+    let headers: PluginHeader[] = [];
+    this.plugins.forEach((plugin) => {
+      headers.push({
+        name: plugin.getPluginId(),
+        methods: plugin.getMethods().map((m): PluginMethod => {
+          return { name: m, rtype: 'promise' };
+        })
+      });
+    });
+    return headers;
   }
 }
 `;

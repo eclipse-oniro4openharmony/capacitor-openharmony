@@ -7,6 +7,10 @@ export class DevicePlugin extends CapacitorPlugin {
     return "Device";
   }
 
+  getMethods(): string[] {
+    return ["getInfo", "getId"];
+  }
+
   async getInfo(call: PluginCall) {
     class DeviceInfo {
       model: string = "";

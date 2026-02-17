@@ -15,24 +15,34 @@ export interface PluginResult {
 }
 
 export interface ResponseHeader {
-    header: string;
-    value: string;
+  header: string;
+  value: string;
 }
 
 export interface HarmonyProxy {
-    postMessage: (jsonMessage: string) => void;
+  postMessage: (jsonMessage: string) => void;
 }
 
 export interface AppState {
-    isActive: boolean;
+  isActive: boolean;
 }
 
 export interface AppUrl {
-    url: string;
+  url: string;
 }
 
 export interface PluginErrorData {
-    message: string;
-    code?: string;
-    error?: Object;
+  message: string;
+  code?: string;
+  error?: Object;
+}
+
+export interface PluginMethod {
+  name: string;
+  rtype?: "promise" | "callback";
+}
+
+export interface PluginHeader {
+  name: string;
+  methods: PluginMethod[];
 }

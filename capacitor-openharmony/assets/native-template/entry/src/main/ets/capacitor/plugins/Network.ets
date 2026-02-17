@@ -15,21 +15,25 @@ export class NetworkPlugin extends CapacitorPlugin {
     return "Network";
   }
 
+  getMethods(): string[] {
+    return ["getStatus", "addListener", "removeListener", "removeAllListeners"];
+  }
+
   load() {
     this.startMonitoring();
   }
 
   async getStatus(call: PluginCall) {
-    let netHandle = connection.getDefaultNetSync();
-    if (!netHandle || netHandle.netId === 0) {
-      let status = new NetworkStatus();
-      status.connected = false;
-      status.connectionType = "none";
-      call.resolve(status);
-      return;
-    }
-
     try {
+      let netHandle = connection.getDefaultNetSync();
+      if (!netHandle || netHandle.netId === 0) {
+        let status = new NetworkStatus();
+        status.connected = false;
+        status.connectionType = "none";
+        call.resolve(status);
+        return;
+      }
+
       let caps = await connection.getNetCapabilities(netHandle);
       let type = this.getConnectionType(caps);
       let status = new NetworkStatus();

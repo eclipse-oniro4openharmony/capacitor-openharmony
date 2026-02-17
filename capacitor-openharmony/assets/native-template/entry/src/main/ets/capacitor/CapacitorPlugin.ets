@@ -19,6 +19,10 @@ export abstract class CapacitorPlugin {
 
   abstract getPluginId(): string;
 
+  getMethods(): string[] {
+    return [];
+  }
+
   addListener(call: PluginCall): void {
     // Default implementation: just resolve.
     // The bridge handles the JS side event registration ?

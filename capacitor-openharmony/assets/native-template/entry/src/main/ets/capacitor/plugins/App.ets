@@ -7,8 +7,16 @@ export class AppPlugin extends CapacitorPlugin {
     return "App";
   }
 
+  getMethods(): string[] {
+    return ["exitApp", "addListener", "removeListener", "removeAllListeners"];
+  }
+
   exitApp(call: PluginCall) {
-    this.context.terminateSelf();
+    try {
+      this.context.terminateSelf();
+    } catch (e) {
+      // ignore
+    }
     call.resolve();
   }
 

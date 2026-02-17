@@ -24,11 +24,16 @@ This phase focused on implementing the Plugin Runtime MVP, enabling the executio
     -   Generate `PluginRegistry.ets` dynamically, registering discovered plugins (including `App` and `Network`).
     -   Update `oh-package.json5` to include plugin dependencies.
     -   Fix `oh-package.json5` configuration injection (comma handling, location).
+9.  **Dynamic Plugin Headers**:
+    -   Implemented `getMethods()` contracts in `CapacitorPlugin` and all core plugins (`Device`, `App`, `Network`).
+    -   Updated `sync` command to generate `PluginRegistry.ets` with `getPluginHeaders()` method.
+    -   Updated `CapacitorBridge` to inject `PluginHeaders` dynamically avoiding hardcoded values.
 
 ## Technical Details
 -   **Bridge Communication**:
     -   The bridge uses `window.androidBridge` (injected via `javaScriptProxy`).
     -   **CRITICAL**: A custom JS adapter is injected in `CapacitorBridge.ets` (`injectCapacitorGlobal`) to define `window.Capacitor.nativePromise`, `PluginHeaders`, and callbacks. This is required because `@capacitor/core` 6+ does not include the bridge logic in the JS bundle; it expects the native platform to provide it.
+    -   **Dynamic Headers**: `PluginHeaders` are now injected dynamically via `this.registry.getPluginHeaders()`, ensuring that any registered plugin exposes its methods correctly to the web runtime.
 -   **Plugin Registry**:
     -   **Automated Generation**: The `sync` command now generates `PluginRegistry.ets` based on `package.json` dependencies.
     -   Core plugins (`Device`, `App`, `Network`) are currently included by default in the generation logic as they reside in the template for this phase.
