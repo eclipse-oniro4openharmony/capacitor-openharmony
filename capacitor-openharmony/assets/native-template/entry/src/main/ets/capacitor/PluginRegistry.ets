@@ -1,7 +1,7 @@
 import { CapacitorPlugin } from "./CapacitorPlugin";
 import { CapacitorBridge } from "./CapacitorBridge";
+import { PluginHeader, PluginMethod } from "./BridgeInterfaces";
 import { common } from "@kit.AbilityKit";
-import { DevicePlugin } from "./plugins/Device";
 
 export class PluginRegistry {
   private plugins: Map<string, CapacitorPlugin> = new Map();
@@ -14,11 +14,22 @@ export class PluginRegistry {
     this.registerPlugins();
   }
 
-  private registerPlugins() {
-    this.plugins.set("Device", new DevicePlugin(this.bridge, this.context));
-  }
+  private registerPlugins() {}
 
   getPlugin(pluginId: string): CapacitorPlugin | undefined {
     return this.plugins.get(pluginId);
+  }
+
+  getPluginHeaders(): PluginHeader[] {
+    let headers: PluginHeader[] = [];
+    this.plugins.forEach((plugin) => {
+      headers.push({
+        name: plugin.getPluginId(),
+        methods: plugin.getMethods().map((m: string): PluginMethod => {
+          return { name: m, rtype: "promise" };
+        }),
+      });
+    });
+    return headers;
   }
 }

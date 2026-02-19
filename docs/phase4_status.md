@@ -47,6 +47,47 @@ This phase focused on implementing the Plugin Runtime MVP, enabling the executio
 -   `Device.getInfo()`, `App.exitApp()`, and `Network.getStatus()` are called successfully.
 -   Plugin events (`networkStatusChange`) are propagated from native to web.
 
+# Phase 4.1: Debugging Real-World App (Lichobile) - Status: IN PROGRESS
+
+## Overview
+This phase focused on debugging and running a real-world Ionic/Capacitor application (`lichobile`, the Lichess mobile app) on OpenHarmony to validate the platform integration and identify missing features.
+
+## Findings & Fixes
+
+### 1. Black Screen Issue (Preferences Plugin)
+- **Problem**: The app launched but displayed a black screen. Logs indicated an `Uncaught (in promise) Error: "Preferences" plugin is not implemented on android`.
+- **Cause**: The app relies heavily on `@capacitor/preferences` for initialization (session management, settings). The plugin was missing from the OpenHarmony implementation, causing a promise rejection that halted the app's startup sequence.
+- **Fix**: 
+    - Implemented `Preferences` plugin using `@ohos.data.preferences`.
+    - Returns `value: string | null` as expected by Capacitor.
+    - Registered the plugin in `PluginRegistry.ets`.
+    - **Note**: The error message mentioned "android" likely because the web runtime defaults to assuming "android" when native platform is detected but specific handling is missing, or due to the bridge Shim.
+
+### 2. Device Plugin Enhancement
+- **Problem**: Logs showed `Uncaught (in promise) Error: "Device.getLanguageCode()" is not implemented`.
+- **Fix**: Implemented `getLanguageCode` in `DevicePlugin` using `@ohos.i18n.getSystemLanguage()`.
+
+### 3. Missing Plugins
+The app logs indicate several other missing plugins:
+-   `SoundEffect` (custom/community plugin)
+-   `PushNotifications` (`@capacitor/push-notifications`)
+-   `StatusBar` (`@capacitor/status-bar`)
+
+Despite these missing plugins, the app now proceeds to render the UI and function (game board loads, assets serve, network requests work).
+
+## Technical Implementation (Preferences)
+-   Used `@ohos.data.preferences` to persist key-value pairs.
+-   Implemented `get`, `set`, `remove`, `clear`, `keys` methods.
+-   Handled ArkTS strict mode requirements (explicit classes for return values).
+
+## Verification
+-   `lichobile` app launches successfully.
+-   Webview renders the game interface.
+-   Assets (SVG pieces, fonts, JS bundles) are served correctly via `http://localhost`.
+-   Network requests to `lichess.dev` are intercepted and succeed.
+-   `WebViewConsole` logs "connected as anonymous" and "all sounds loaded".
+
+
 ## Next Steps 
 -   Create a proper JS adapter for OpenHarmony to avoid the `androidBridge` shim.
 -   Extract core plugins (`App`, `Device`, `Network`) into separate packages/modules.

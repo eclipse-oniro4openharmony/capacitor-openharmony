@@ -1,6 +1,7 @@
 import { CapacitorPlugin } from "../CapacitorPlugin";
 import { PluginCall } from "../PluginCall";
 import deviceInfo from "@ohos.deviceInfo";
+import i18n from "@ohos.i18n";
 
 export class DevicePlugin extends CapacitorPlugin {
   getPluginId(): string {
@@ -8,7 +9,16 @@ export class DevicePlugin extends CapacitorPlugin {
   }
 
   getMethods(): string[] {
-    return ["getInfo", "getId"];
+    return ["getInfo", "getId", "getLanguageCode"];
+  }
+
+  async getLanguageCode(call: PluginCall) {
+    class LanguageResult {
+      value: string = "";
+    }
+    let val = i18n.getSystemLanguage();
+    let res: LanguageResult = { value: val };
+    call.resolve(res);
   }
 
   async getInfo(call: PluginCall) {
