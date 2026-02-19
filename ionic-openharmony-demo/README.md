@@ -29,7 +29,7 @@ Follow these steps to build and run the project:
 5.  **Generate Signature Configs:**
     You must manually generate signature configs in the `openharmony` target code. This can be done using:
     *   **DevEco Studio**: Open the `openharmony` folder in DevEco Studio and configure the signing configs in the Project Structure.
-    *   **Oniro Builder Scripts**: If you are using the Oniro build environment, use the provided scripts to generate the signatures.
+    *   **Oniro Builder Scripts**: If you have the onirobuilder tool installed, you can run `onirobuilder sign` to generate the signature configs.
 
 6.  **Run the application:**
     Use the provided helper script to build the HAP and install it on a connected device:

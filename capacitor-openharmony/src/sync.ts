@@ -21,9 +21,41 @@ export async function sync(config: any) {
     await copy(src, dest);
     console.log('Web assets synced.');
 
+    await updateAppName(projectRoot, config.appName);
     await generatePluginRegistry(projectRoot);
   } catch (e) {
     console.error('Sync failed:', e);
+  }
+}
+
+async function updateAppName(projectRoot: string, appName: string) {
+  const stringJsonPath = join(projectRoot, 'openharmony/entry/src/main/resources/base/element/string.json');
+  if (!existsSync(stringJsonPath)) {
+    console.warn(`string.json not found at ${stringJsonPath}. Skipping App Name sync.`);
+    return;
+  }
+
+  try {
+    const fs = require('fs-extra');
+    const content = await fs.readJson(stringJsonPath);
+
+    let updated = false;
+    if (content.string) {
+      const labelItem = content.string.find((item: any) => item.name === 'EntryAbility_label');
+      if (labelItem) {
+        labelItem.value = appName;
+        updated = true;
+      }
+    }
+
+    if (updated) {
+      await fs.writeJson(stringJsonPath, content, { spaces: 2 });
+      console.log(`Updated App Name to "${appName}" in string.json`);
+    } else {
+      console.warn('EntryAbility_label not found in string.json');
+    }
+  } catch (e) {
+    console.error('Failed to update App Name:', e);
   }
 }
 

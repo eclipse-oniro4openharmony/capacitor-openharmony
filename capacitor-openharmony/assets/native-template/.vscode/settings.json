@@ -1,6 +1,0 @@
-{
-  "oniro.hapPath": "entry/build/default/outputs/default/entry-default-signed.hap",
-  "files.associations": {
-    "*.json5": "jsonc"
-  }
-}
