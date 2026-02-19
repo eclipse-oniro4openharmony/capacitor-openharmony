@@ -11,6 +11,10 @@
   },
   "dependencies": {
     "@capacitor-community/openharmony": "file:../capacitor-openharmony",
+    "@capacitor-mp/app": "file:../plugins/App",
+    "@capacitor-mp/device": "file:../plugins/Device",
+    "@capacitor-mp/network": "file:../plugins/Network",
+    "@capacitor-mp/preferences": "file:../plugins/Preferences",
     "@capacitor/app": "^6.0.3",
     "@capacitor/core": "^6.0.0",
     "@capacitor/device": "^6.0.3",

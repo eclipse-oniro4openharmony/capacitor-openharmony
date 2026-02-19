@@ -87,9 +87,29 @@ Despite these missing plugins, the app now proceeds to render the UI and functio
 -   Network requests to `lichess.dev` are intercepted and succeed.
 -   `WebViewConsole` logs "connected as anonymous" and "all sounds loaded".
 
+# Phase 4.2: Plugin Architecture Refinement - Status: COMPLETE
 
-## Next Steps 
+## Overview
+Refined the plugin architecture by extracting core plugins (`App`, `Device`, `Network`, `Preferences`) from the native template into separate packages and implementing automatic detection and installation in the `sync` command.
+
+## Achievements
+1.  **Automatic Plugin Detection**: Updated `sync` command to:
+    -   Scan `package.json` for dependencies with `capacitor.openharmony.src` metadata.
+    -   Automatically copy the specified `.ets` source file from `node_modules` (or local paths) to `entry/src/main/ets/capacitor/plugins/`.
+    -   Generate `PluginRegistry.ets` importing these local copies.
+2.  **Plugin Extraction**:
+    -   Removed `App`, `Device`, `Network`, `Preferences` from `native-template`.
+    -   Created local plugin packages for the demo app to simulate external dependencies.
+3.  **Verification**:
+    -   Demo app successfully builds and runs.
+    -   Plugins are correctly registered and functional (verified via logs).
+
+## Technical Details
+-   **Sync Logic**: The `sync` command now performs a copy operation for plugin sources instead of referencing them via `oh-package.json5` file protocols. This simplifies the build process and avoids symlink/path issues in OpenHarmony.
+-   **Convention**: Plugins are expected to export a class named `${Filename}Plugin` (e.g., `Device.ets` -> `DevicePlugin`).
+-   **Local Plugins**: The demo app now uses a `local-plugins` directory to host the source of the core plugins, effectively treating them as external dependencies.
+
+## Next Steps
+-   Publish core plugins as actual npm packages (e.g., `@capacitor-community/device-openharmony`).
 -   Create a proper JS adapter for OpenHarmony to avoid the `androidBridge` shim.
--   Extract core plugins (`App`, `Device`, `Network`) into separate packages/modules.
 -   Implement `FileSystem` plugin.
--   Prepare for initial release/packaging.
