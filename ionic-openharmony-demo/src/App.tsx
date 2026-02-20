@@ -3,6 +3,7 @@ import './App.css'
 import { Device } from '@capacitor/device';
 import { Network } from '@capacitor/network';
 import { App as CapacitorApp } from '@capacitor/app';
+import { Browser } from '@capacitor/browser';
 
 function App() {
     const [count, setCount] = useState(0)
@@ -52,6 +53,10 @@ function App() {
         CapacitorApp.exitApp();
     };
 
+    const openBrowser = async () => {
+        await Browser.open({ url: 'https://capacitorjs.com/' });
+    };
+
     return (
         <>
             <h1>Ionic OpenHarmony</h1>
@@ -64,6 +69,11 @@ function App() {
             <div className="card">
                 <h2>App Plugin</h2>
                 <button onClick={exitApp}>Exit App</button>
+            </div>
+
+            <div className="card">
+                <h2>Browser Plugin</h2>
+                <button onClick={openBrowser}>Open Browser</button>
             </div>
 
             <div className="card">
