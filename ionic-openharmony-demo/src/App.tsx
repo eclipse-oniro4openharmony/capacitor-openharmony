@@ -4,11 +4,13 @@ import { Device } from '@capacitor/device';
 import { Network } from '@capacitor/network';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 function App() {
     const [count, setCount] = useState(0)
     const [deviceInfo, setDeviceInfo] = useState<any>(null);
     const [networkStatus, setNetworkStatus] = useState<any>(null);
+    const [fileContent, setFileContent] = useState<string>('');
 
     useEffect(() => {
         console.log("App Mounted - Checking Plugins");
@@ -57,6 +59,43 @@ function App() {
         await Browser.open({ url: 'https://capacitorjs.com/' });
     };
 
+    const testFilesystem = async () => {
+        try {
+            console.log("Testing Filesystem...");
+            const fileName = 'test.txt';
+            const content = 'Hello from OpenHarmony! ' + new Date().toISOString();
+
+            console.log("Writing file...");
+            await Filesystem.writeFile({
+                path: fileName,
+                data: content,
+                directory: Directory.Data,
+                encoding: Encoding.UTF8
+            });
+            console.log("File written");
+
+            console.log("Reading file...");
+            const result = await Filesystem.readFile({
+                path: fileName,
+                directory: Directory.Data,
+                encoding: Encoding.UTF8
+            });
+            console.log("File read success:", result.data);
+            setFileContent(result.data as string);
+
+            console.log("Stat file...");
+            const stats = await Filesystem.stat({
+                path: fileName,
+                directory: Directory.Data
+            });
+            console.log("File stats:", JSON.stringify(stats));
+
+        } catch (err) {
+            console.error('Filesystem test failed:', err);
+            setFileContent('Error: ' + JSON.stringify(err));
+        }
+    };
+
     return (
         <>
             <h1>Ionic OpenHarmony</h1>
@@ -80,6 +119,14 @@ function App() {
                 <h2>Network Plugin</h2>
                 <p>Status: {networkStatus ? (networkStatus.connected ? 'Connected' : 'Disconnected') : 'Loading...'}</p>
                 <p>Type: {networkStatus ? networkStatus.connectionType : '-'}</p>
+            </div>
+
+            <div className="card">
+                <h2>Filesystem Plugin</h2>
+                <button onClick={testFilesystem}>Test Filesystem</button>
+                <p style={{ fontSize: '12px', wordBreak: 'break-all' }}>
+                    Content: {fileContent || 'No content yet'}
+                </p>
             </div>
 
             <div className="card">
