@@ -228,13 +228,22 @@ export class CapacitorBridge {
   }
 
   private getMimeType(path: string): string {
-    if (path.endsWith(".html")) return "text/html";
-    if (path.endsWith(".js")) return "application/javascript";
-    if (path.endsWith(".css")) return "text/css";
-    if (path.endsWith(".png")) return "image/png";
-    if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return "image/jpeg";
-    if (path.endsWith(".svg")) return "image/svg+xml";
-    if (path.endsWith(".json")) return "application/json";
+    const p = path.toLowerCase();
+    if (p.endsWith(".html")) return "text/html";
+    if (p.endsWith(".js") || p.endsWith(".mjs")) return "application/javascript";
+    if (p.endsWith(".css")) return "text/css";
+    if (p.endsWith(".png")) return "image/png";
+    if (p.endsWith(".jpg") || p.endsWith(".jpeg")) return "image/jpeg";
+    if (p.endsWith(".webp")) return "image/webp";
+    if (p.endsWith(".gif")) return "image/gif";
+    if (p.endsWith(".svg")) return "image/svg+xml";
+    if (p.endsWith(".json")) return "application/json";
+    if (p.endsWith(".wasm")) return "application/wasm";
+    if (p.endsWith(".pdf")) return "application/pdf";
+    if (p.endsWith(".woff")) return "font/woff";
+    if (p.endsWith(".woff2")) return "font/woff2";
+    if (p.endsWith(".ttf")) return "font/ttf";
+    if (p.endsWith(".otf")) return "font/otf";
     return "application/octet-stream";
   }
 
