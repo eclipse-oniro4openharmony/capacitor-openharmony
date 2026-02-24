@@ -96,6 +96,28 @@ function App() {
         }
     };
 
+    const testDocumentsPicker = async () => {
+        try {
+            console.log("Testing Documents Picker...");
+            const fileName = 'hello-openharmony.txt';
+            const content = 'This file was saved via DocumentViewPicker! at ' + new Date().toISOString();
+
+            console.log("Writing file to DOCUMENTS...");
+            const result = await Filesystem.writeFile({
+                path: fileName,
+                data: content,
+                directory: Directory.Documents,
+                encoding: Encoding.UTF8
+            });
+            console.log("File written to DOCUMENTS via picker. URI:", result.uri);
+            setFileContent('Saved to: ' + result.uri);
+
+        } catch (err) {
+            console.error('Documents picker test failed:', err);
+            setFileContent('Picker Error: ' + JSON.stringify(err));
+        }
+    };
+
     return (
         <>
             <h1>Ionic OpenHarmony</h1>
@@ -123,7 +145,10 @@ function App() {
 
             <div className="card">
                 <h2>Filesystem Plugin</h2>
-                <button onClick={testFilesystem}>Test Filesystem</button>
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                    <button onClick={testFilesystem}>Test Filesystem (Data)</button>
+                    <button onClick={testDocumentsPicker}>Test Save to Documents (Picker)</button>
+                </div>
                 <p style={{ fontSize: '12px', wordBreak: 'break-all' }}>
                     Content: {fileContent || 'No content yet'}
                 </p>

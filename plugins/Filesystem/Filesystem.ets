@@ -1,11 +1,18 @@
 import { CapacitorPlugin } from "../CapacitorPlugin";
 import { PluginCall } from "../PluginCall";
-import { fileIo as fs } from "@kit.CoreFileKit";
+import { fileIo as fs, picker } from "@kit.CoreFileKit";
+import { common } from "@kit.AbilityKit";
 import { BusinessError } from "@kit.BasicServicesKit";
 import { buffer } from "@kit.ArkTS";
 
 class ReadFileResult {
   data: string = "";
+}
+
+enum Encoding {
+  UTF8 = "utf8",
+  ASCII = "ascii",
+  UTF16 = "utf16",
 }
 
 class WriteFileResult {
@@ -88,10 +95,51 @@ export class FilesystemPlugin extends CapacitorPlugin {
     return baseDir + "/" + path;
   }
 
+  private async writeData(fd: number, data: string, encoding?: string): Promise<void> {
+    if (!encoding) {
+      const bytes = buffer.from(data, "base64").buffer;
+      await fs.write(fd, bytes);
+    } else {
+      const enc = encoding.toLowerCase();
+      if (enc === Encoding.UTF8 || enc === "utf-8") {
+        await fs.write(fd, data);
+      } else if (enc === Encoding.ASCII) {
+        const bytes = buffer.from(data, "ascii").buffer;
+        await fs.write(fd, bytes);
+      } else if (enc === Encoding.UTF16 || enc === "utf-16") {
+        const bytes = buffer.from(data, "utf16le").buffer;
+        await fs.write(fd, bytes);
+      } else {
+        throw new Error(`Unsupported encoding: ${encoding}`);
+      }
+    }
+  }
+
+  private async readData(fd: number, encoding?: string): Promise<string> {
+    const stat = await fs.stat(fd);
+    const arrayBuffer = new ArrayBuffer(stat.size);
+    await fs.read(fd, arrayBuffer);
+
+    if (!encoding) {
+      return buffer.from(arrayBuffer).toString("base64");
+    } else {
+      const enc = encoding.toLowerCase();
+      if (enc === Encoding.UTF8 || enc === "utf-8") {
+        return buffer.from(arrayBuffer).toString("utf8");
+      } else if (enc === Encoding.ASCII) {
+        return buffer.from(arrayBuffer).toString("ascii");
+      } else if (enc === Encoding.UTF16 || enc === "utf-16") {
+        return buffer.from(arrayBuffer).toString("utf16le");
+      } else {
+        throw new Error(`Unsupported encoding: ${encoding}`);
+      }
+    }
+  }
+
   async readFile(call: PluginCall) {
     const path = call.getString("path");
     const directory = call.getString("directory");
-    const encoding = call.getString("encoding"); // 'utf8', 'ascii', 'base64'
+    const encoding = call.getString("encoding");
 
     if (!path) {
       call.reject("Must provide a path");
@@ -101,21 +149,13 @@ export class FilesystemPlugin extends CapacitorPlugin {
     const fullPath = this.getPath(path, directory);
 
     try {
-      if (encoding === "base64") {
-        const file = await fs.open(fullPath, fs.OpenMode.READ_ONLY);
-        const stat = await fs.stat(file.fd);
-        const arrayBuffer = new ArrayBuffer(stat.size);
-        await fs.read(file.fd, arrayBuffer);
+      const file = await fs.open(fullPath, fs.OpenMode.READ_ONLY);
+      try {
+        const data = await this.readData(file.fd, encoding);
+        let res: ReadFileResult = { data };
+        call.resolve(res);
+      } finally {
         await fs.close(file);
-
-        const b64 = buffer.from(arrayBuffer).toString("base64");
-        let res: ReadFileResult = { data: b64 };
-        call.resolve(res);
-      } else {
-        // Default to utf8 text
-        const content = await fs.readText(fullPath);
-        let res: ReadFileResult = { data: content };
-        call.resolve(res);
       }
     } catch (err) {
       const bErr = err as BusinessError;
@@ -126,12 +166,45 @@ export class FilesystemPlugin extends CapacitorPlugin {
   async writeFile(call: PluginCall) {
     const path = call.getString("path");
     const directory = call.getString("directory");
-    const data = call.getString("data");
+    const data = call.getString("data") ?? "";
     const encoding = call.getString("encoding");
     const recursive = call.getBoolean("recursive");
 
-    if (!path || data === undefined) {
-      call.reject("Must provide a path and data");
+    if (!path) {
+      call.reject("Must provide a path");
+      return;
+    }
+
+    if (directory === "DOCUMENTS") {
+      try {
+        const documentSaveOptions = new picker.DocumentSaveOptions();
+        documentSaveOptions.newFileNames = [path];
+
+        const documentViewPicker = new picker.DocumentViewPicker(this.context);
+        const uris = await documentViewPicker.save(documentSaveOptions);
+
+        if (uris && uris.length > 0) {
+          const uri = uris[0];
+          const file = await fs.open(
+            uri,
+            fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE | fs.OpenMode.TRUNC,
+          );
+
+          try {
+            await this.writeData(file.fd, data, encoding);
+          } finally {
+            await fs.close(file);
+          }
+
+          let res: WriteFileResult = { uri: uri };
+          call.resolve(res);
+        } else {
+          call.reject("User cancelled document selection");
+        }
+      } catch (err) {
+        const bErr = err as BusinessError;
+        call.reject(bErr.message || "Failed to save document via picker");
+      }
       return;
     }
 
@@ -150,14 +223,12 @@ export class FilesystemPlugin extends CapacitorPlugin {
         fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE | fs.OpenMode.TRUNC,
       );
 
-      if (encoding === "base64") {
-        const bytes = buffer.from(data, "base64").buffer;
-        await fs.write(file.fd, bytes);
-      } else {
-        await fs.write(file.fd, data);
+      try {
+        await this.writeData(file.fd, data, encoding);
+      } finally {
+        await fs.close(file);
       }
 
-      await fs.close(file);
       let res: WriteFileResult = { uri: "file://" + fullPath };
       call.resolve(res);
     } catch (err) {
@@ -185,14 +256,12 @@ export class FilesystemPlugin extends CapacitorPlugin {
         fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE | fs.OpenMode.APPEND,
       );
 
-      if (encoding === "base64") {
-        const bytes = buffer.from(data, "base64").buffer;
-        await fs.write(file.fd, bytes);
-      } else {
-        await fs.write(file.fd, data);
+      try {
+        await this.writeData(file.fd, data, encoding);
+      } finally {
+        await fs.close(file);
       }
 
-      await fs.close(file);
       call.resolve();
     } catch (err) {
       const bErr = err as BusinessError;
