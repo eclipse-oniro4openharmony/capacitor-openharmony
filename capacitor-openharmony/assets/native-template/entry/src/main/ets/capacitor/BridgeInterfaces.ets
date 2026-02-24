@@ -12,6 +12,7 @@ export interface PluginResult {
   success: boolean;
   data: Object;
   error?: Object | null;
+  save?: boolean;
 }
 
 export interface ResponseHeader {

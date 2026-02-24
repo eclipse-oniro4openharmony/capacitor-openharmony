@@ -23,6 +23,7 @@ export class CapacitorBridge {
   private controller: webview.WebviewController;
   private context: common.UIAbilityContext;
   private registry: PluginRegistry;
+  private callInfos: Map<string, BridgeMessage> = new Map();
 
   constructor(controller: webview.WebviewController, context: common.UIAbilityContext) {
     this.controller = controller;
@@ -56,6 +57,7 @@ export class CapacitorBridge {
         return;
       }
 
+      this.callInfos.set(callbackId, message);
       this.routeToPlugin(pluginId, methodName, options || {}, callbackId);
     } catch (e) {
       hilog.error(DOMAIN, TAG, "JSON Parse Error: %{public}s", JSON.stringify(e));
@@ -125,15 +127,21 @@ export class CapacitorBridge {
     }
   }
 
-  sendResult(callbackId: string, data: Object, success: boolean) {
+  sendResult(callbackId: string, data: Object, success: boolean, save: boolean = false) {
+    let callInfo = this.callInfos.get(callbackId);
     let resultPayload: PluginResult = {
-      pluginId: "PluginName", // Ideally passed through
-      methodName: "MethodName",
+      pluginId: callInfo?.pluginId ?? "Unknown",
+      methodName: callInfo?.methodName ?? "Unknown",
       callbackId: callbackId,
       success: success,
       data: data,
       error: success ? null : data,
+      save: save,
     };
+
+    if (!save) {
+      this.callInfos.delete(callbackId);
+    }
 
     let payloadStr = JSON.stringify(resultPayload);
     let jsCode = `window.Capacitor.fromNative(${payloadStr})`;
