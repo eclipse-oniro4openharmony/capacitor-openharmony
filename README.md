@@ -8,8 +8,8 @@ Capacitor OpenHarmony brings the cross-platform power of Capacitor to the OpenHa
 
 ## Project Structure
 
-- `capacitor-openharmony/`: The core platform adapter package (`@capacitor-community/openharmony`).
-- `plugins/`: OpenHarmony-specific implementations of Capacitor core plugins (e.g., Device, Filesystem, Preferences).
+- `capacitor-openharmony/`: The core platform adapter package (`@oniroproject/capacitor-openharmony`).
+- `plugins/`: OpenHarmony-specific implementations of Capacitor core plugins (e.g., Device, Filesystem, Preferences) under the `@oniroproject` scope.
 - `ionic-openharmony-demo/`: A sample Ionic React application configured for OpenHarmony.
 - `docs/`: Technical plans, status reports, and architecture documentation.
 

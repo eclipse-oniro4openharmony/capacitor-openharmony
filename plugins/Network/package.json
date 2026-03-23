@@ -1,6 +1,15 @@
 {
-    "name": "@capacitor-mp/network",
-    "version": "0.0.1",
+    "name": "@oniroproject/capacitor-network",
+    "version": "0.1.0",
+    "description": "Network plugin for Capacitor on OpenHarmony",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/eclipse-oniro4openharmony/capacitor-openharmony.git"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
     "devDependencies": {
         "@capacitor/core": "^6.0.0"
     },

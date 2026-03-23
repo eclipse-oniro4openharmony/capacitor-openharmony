@@ -1,9 +1,16 @@
 {
-  "name": "@capacitor-community/openharmony",
-  "version": "0.0.1",
+  "name": "@oniroproject/capacitor-openharmony",
+  "version": "0.1.0",
   "description": "OpenHarmony platform adapter for Capacitor",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eclipse-oniro4openharmony/capacitor-openharmony.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
