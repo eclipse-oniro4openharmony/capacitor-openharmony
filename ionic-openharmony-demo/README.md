@@ -18,12 +18,12 @@ Follow these steps to build and run the project:
 
 3.  **Add the OpenHarmony platform:**
     ```bash
-    npx cap add openharmony
+    npx cap add @oniroproject/capacitor-openharmony
     ```
 
 4.  **Sync the project:**
     ```bash
-    npx cap sync openharmony
+    npx cap sync @oniroproject/capacitor-openharmony
     ```
 
 5.  **Generate Signature Configs:**
