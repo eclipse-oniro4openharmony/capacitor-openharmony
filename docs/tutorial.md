@@ -61,7 +61,7 @@ Before you begin, ensure you have the following tools installed and configured.
 | npm | 10.x+ | Bundled with Node 20+ |
 | OpenHarmony SDK | API 12+ | Install via DevEco Studio's SDK Manager, or using the Oniro IDE VS Code extension |
 | hdc | Bundled with the SDK | Device connector CLI. Required only if not using DevEco Studio. |
-| hvigorw | Command Line Tools | Build tool for OpenHarmony. Required only if not using DevEco Studio. |
+| hvigorw | Bundled with Command Line Tools | Build tool for OpenHarmony. Required only if not using DevEco Studio. |
 | Oniro IDE *(optional)* | Latest | VS Code extension for building and signing OpenHarmony apps without DevEco Studio |
 
 ### Install Node.js
@@ -83,20 +83,13 @@ ionic start my-oniro-app blank --type=react --capacitor
 cd my-oniro-app
 ```
 
-The `--capacitor` flag sets up a `capacitor.config.ts` and installs Capacitor packages. However, the current Ionic CLI installs **Capacitor 8**, while the `@oniroproject/capacitor-openharmony` adapter requires **Capacitor 6**. You must downgrade:
+The `--capacitor` flag sets up a `capacitor.config.ts` and installs Capacitor packages. The current Ionic CLI installs **Capacitor 8**. The `@oniroproject/capacitor-openharmony` adapter supports both Capacitor 6 and 8, so you can keep the version that was installed. Remove the extra plugins that Ionic scaffolds — they will be replaced by the OpenHarmony-specific ones later:
 
 ```bash
-# Remove the Capacitor 8 packages that ionic start installs
-npm uninstall @capacitor/core @capacitor/cli @capacitor/app \
-  @capacitor/haptics @capacitor/keyboard @capacitor/status-bar
-
-# Install Capacitor 6
-npm install @capacitor/core@6 @capacitor/cli@6
+npm uninstall @capacitor/app @capacitor/haptics @capacitor/keyboard @capacitor/status-bar
 ```
 
-> **Important:** All `@capacitor/*` packages must be pinned to version 6 (`@6`) to avoid peer-dependency conflicts with the platform adapter.
-
-If you already have an existing Ionic/React/Vue/Angular project that uses Capacitor, skip to [step 4](#4-install-the-openharmony-platform-adapter) and run the commands from that project's root.
+If you already have an existing Ionic/React/Vue/Angular project that uses Capacitor (6, 7, or 8), skip to [step 4](#4-install-the-openharmony-platform-adapter) and run the commands from that project's root.
 
 ## 4. Install the OpenHarmony Platform Adapter
 
@@ -133,17 +126,17 @@ The Oniro project provides OpenHarmony-native implementations of the most common
 - **`@capacitor/<name>`** — the standard Capacitor package, which provides the TypeScript interface and types used in your web code.
 - **`@oniroproject/capacitor-<name>`** — the OpenHarmony native implementation (ArkTS `.ets` source files) that is copied into the native project during `cap sync`.
 
-Install both layers together. Pin the `@capacitor/*` packages to **version 6** to match the platform adapter:
+Install both layers together. The `@capacitor/*` packages will automatically resolve to a version compatible with the Capacitor core version you have installed:
 
 ```bash
 npm install \
-  @capacitor/app@6 \
-  @capacitor/browser@6 \
-  @capacitor/device@6 \
-  @capacitor/filesystem@6 \
-  @capacitor/network@6 \
-  @capacitor/preferences@6 \
-  @capacitor/toast@6 \
+  @capacitor/app \
+  @capacitor/browser \
+  @capacitor/device \
+  @capacitor/filesystem \
+  @capacitor/network \
+  @capacitor/preferences \
+  @capacitor/toast \
   @oniroproject/capacitor-app \
   @oniroproject/capacitor-browser \
   @oniroproject/capacitor-device \
@@ -333,7 +326,9 @@ openharmony/
 │           └── rawfile/
 │               └── www/          ← your built web assets land here
 ├── build-profile.json5
-└── hvigor/                       ← hvigor build config
+├── hvigor/                       ← hvigor build config
+├── hvigorfile.ts
+└── oh-package.json5
 ```
 
 > Run `npx cap add` only once per project. For subsequent updates, use `cap sync`.
