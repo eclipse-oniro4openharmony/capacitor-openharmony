@@ -22,7 +22,7 @@ struct Index {
   build() {
     Column() {
       Web({
-        src: "http://localhost/index.html",
+        src: "http://localhost/",
         controller: this.controller,
       })
         .javaScriptAccess(true)

@@ -267,7 +267,18 @@ export class CapacitorBridge {
         // 1. Define Plugin Headers
         window.Capacitor.PluginHeaders = ${JSON.stringify(this.registry.getPluginHeaders())};
 
-        // 2. Define Callback Management
+        // 2. isPluginAvailable & getPlatform
+        window.Capacitor.getPlatform = function() { return 'openharmony'; };
+        window.Capacitor.isPluginAvailable = function(name) {
+            var headers = window.Capacitor.PluginHeaders || [];
+            for (var i = 0; i < headers.length; i++) {
+                if (headers[i].name === name) return true;
+            }
+            return false;
+        };
+        window.Capacitor.isNativePlatform = function() { return true; };
+
+        // 3. Define Callback Management
         window.Capacitor.callbacks = window.Capacitor.callbacks || {};
         
         window.Capacitor.toNative = function(pluginId, methodName, options, storedCallback) {

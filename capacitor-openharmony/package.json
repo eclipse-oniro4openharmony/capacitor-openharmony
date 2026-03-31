@@ -1,6 +1,6 @@
 {
   "name": "@oniroproject/capacitor-openharmony",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "OpenHarmony platform adapter for Capacitor",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
